@@ -87,11 +87,11 @@ function ignoreClosed(): boolean {
  * To prevent mistakes, this will ignore invalid workflow trigger
  */
 export default async function (): Promise<boolean> {
-  if (ignoreLabeledRaceCondition()) {
+  if (ignoreClosed()) {
     return true
   }
 
-  if (ignoreClosed()) {
+  if (ignoreLabeledRaceCondition()) {
     return true
   }
 
@@ -103,17 +103,27 @@ export default async function (): Promise<boolean> {
     return ignoreBot()
   }
 
-  if (is('pull_request', ['synchronize', 'opened', 'labeled', 'unlabeled'])) {
+  if (is('pull_request', ['synchronize', 'opened'])) {
+    return ignoreBot()
+  }
+
+  if (is('pull_request', ['labeled', 'unlabeled'])) {
     return false
   }
 
-  if (
-    is('pull_request_target', ['synchronize', 'opened', 'labeled', 'unlabeled'])
-  ) {
+  if (is('pull_request_target', ['synchronize', 'opened'])) {
+    return ignoreBot()
+  }
+
+  if (is('pull_request_target', ['labeled', 'unlabeled'])) {
     return false
   }
 
-  if (is('issues', ['opened', 'labeled', 'unlabeled'])) {
+  if (is('issues', ['opened'])) {
+    return ignoreBot()
+  }
+
+  if (is('issues', ['labeled', 'unlabeled'])) {
     return false
   }
 
